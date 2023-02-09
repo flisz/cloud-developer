@@ -3,6 +3,7 @@ import express, { Router, Request, Response } from 'express';
 const bodyParser = require('body-parser')
 
 import { Car, cars as cars_list } from './cars';
+import {stringify} from "querystring";
 
 (async () => {
   let cars:Car[]  = cars_list;
@@ -72,13 +73,68 @@ import { Car, cars as cars_list } from './cars';
 
   // @TODO Add an endpoint to GET a list of cars
   // it should be filterable by make with a query paramater
+    app.get("/cars", async (req: Request, res: Response ) => {
+        const { make }  = req.query
 
-  // @TODO Add an endpoint to get a specific car
-  // it should require id
-  // it should fail gracefully if no matching car is found
+        //
+        const { potato } = req.query
+
+        console.log(make)
+        console.log(potato)
+
+        if (!make) {
+            return res.status(200).send(cars_list)
+        } else {
+            return res.status(200).send(
+                cars_list.filter(car => car.make == make)
+            )
+        }
+    });
+
+
+    // @TODO Add an endpoint to get a specific car
+    // it should require id
+    // it should fail gracefully if no matching car is found
+    app.get('/cars/:id', async (req:Request, res: Response) => {
+        let { id } = req.params;
+
+        if ( !id ) {
+            return res.status(400).send(`id is required`);
+        } else {
+            let this_car = cars_list.filter(car => car.id == Number(id))
+            console.log('this_car', this_car)
+            if (this_car.length > 0) {
+                return res.status(200).send(this_car)
+            } else {
+                return res.status(404).send(`No car with id: ${id} found.`)
+            }
+        }
+    });
 
   /// @TODO Add an endpoint to post a new car to our list
   // it should require id, type, model, and cost
+    app.post('/cars', async (req:Request, res: Response) => {
+        const { id } = req.body
+        const { make } = req.body
+        const { type } = req.body
+        const { model } = req.body
+        const { cost } = req.body
+
+        if ( [id, make, type, model, cost].every((x) => x !== undefined) ) {
+            let car: Car = {
+                make: make,
+                id: id,
+                type: type,
+                model: model,
+                cost: cost
+            }
+            cars_list.push(car)
+            return res.status(200).send(cars_list)
+        } else {
+            return res.status(422).send(req.body)
+        }
+
+    });
 
   // Start the Server
   app.listen( port, () => {
