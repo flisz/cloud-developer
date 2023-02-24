@@ -1,9 +1,9 @@
 # Specifies intentionally untracked files to ignore when using Git
 # http://git-scm.com/docs/gitignore
 
-*~
 **/package-lock.json
 **/*.env
+*~
 *.sw[mnpcod]
 *.log
 *.tmp
@@ -35,3 +35,9 @@ $RECYCLE.BIN/
 Thumbs.db
 UserInterfaceState.xcuserstate
 node_modules
+venv/
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

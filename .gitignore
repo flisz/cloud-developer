@@ -1,7 +1,9 @@
 # Specifies intentionally untracked files to ignore when using Git
 # http://git-scm.com/docs/gitignore
 
-real-config.ts
+
+**/package-lock.json
+**/*.env
 *~
 *.sw[mnpcod]
 *.log
