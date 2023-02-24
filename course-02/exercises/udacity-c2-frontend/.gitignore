@@ -2,6 +2,8 @@
 # http://git-scm.com/docs/gitignore
 
 *~
+**/package-lock.json
+**/*.env
 *.sw[mnpcod]
 *.log
 *.tmp

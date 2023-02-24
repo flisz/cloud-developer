@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Router, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
@@ -29,11 +29,33 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
   /**************************************************************************** */
 
+  app.get("/filteredimage", async (req:Request, res: Response) => {
+    const { image_url } = req.query;
+
+    if (!image_url) {
+      res.status(422).send("requires image_url query parameter");
+    } else {
+      try {
+          let filteredImagePath = await filterImageFromURL(image_url);  
+          res.status(200).sendFile(
+            filteredImagePath, 
+            function (err) {deleteLocalFiles([filteredImagePath])}
+          );
+      } catch (error) {
+        if (`${error}`.includes("null")) {
+            res.status(404).send(`Could not find image at: ${image_url} (${error})`)  
+        } else {
+          res.status(422).send(`invalid image url: ${image_url}, caught: ${error}`)
+        }
+      }
+    };
+  });
+
   //! END @TODO1
   
   // Root Endpoint
   // Displays a simple message to the user
-  app.get( "/", async ( req, res ) => {
+  app.get( "/", async (req:Request, res: Response) => {
     res.send("try GET /filteredimage?image_url={{}}")
   } );
   
